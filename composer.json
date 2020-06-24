@@ -1,0 +1,15 @@
+{
+  "name": "tomcan/content-security-policy",
+  "description": "Content-Security-Policy parser and generator library",
+  "keywords": ["CSP", "Content-Security-Policy", "Content Security Policy"],
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {"TomCan\\Csp\\": "src/"}
+  },
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.4"
+  }
+}
