@@ -6,6 +6,19 @@ namespace TomCan\Csp;
 
 class CspParser
 {
+
+    const MODE_STRICT = 0;
+    const MODE_LOOSE = 1;
+
+    private int $mode;
+    private int $level;
+
+    public function __construct(int $mode = self::MODE_STRICT, int $level = 3)
+    {
+        $this->mode = $mode;
+        $this->level = $level;
+    }
+
     public function parse($cspString): array
     {
         // Trim any leading or trailing spaces
@@ -57,7 +70,9 @@ class CspParser
                     break;
                 default:
                     // we don't know this directive, throw exception
-                    throw new \InvalidArgumentException('Unknown directive "' . $directive . "'");
+                    if ($this->mode == self::MODE_STRICT) {
+                        throw new \InvalidArgumentException('Unknown directive "' . $directive . "'");
+                    }
             }
 
             // add values
@@ -70,7 +85,9 @@ class CspParser
                 } else {
                     if (preg_match($predefined_pattern_general, $part)) {
                         // invalid pre-defined value for this directive
-                        throw new \InvalidArgumentException('Unknown pre-defined source-list value ' . $part . ' for directive '.$directive);
+                        if ($this->mode == self::MODE_STRICT) {
+                            throw new \InvalidArgumentException('Unknown pre-defined source-list value ' . $part . ' for directive ' . $directive);
+                        }
                     } else {
                         // regular value
                         $values[$directive][$part] = $part;
