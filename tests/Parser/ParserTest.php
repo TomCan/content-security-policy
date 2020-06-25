@@ -149,4 +149,15 @@ class ParserTest extends TestCase
         $this->assertArrayHasKey("'unsafe-inline'", $result['script-src']);
         $this->assertArrayHasKey("'unsafe-eval'", $result['script-src']);
     }
+
+    public function testNonceL2(): void
+    {
+        $parser = new CspParser(CspParser::MODE_STRICT, 2);
+        $result = $parser->parse("style-src 'self' 'nonce-dmFsaWQgbm9uY2U='");
+        $this->assertArrayHasKey("'nonce-dmFsaWQgbm9uY2U='", $result['style-src']);
+        $result = $parser->parse("style-src 'self' 'nonce-not+valid+base64+but+valid+enough'");
+        $this->assertArrayHasKey("'nonce-not+valid+base64+but+valid+enough'", $result['style-src']);
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("style-src 'self' 'nonce-inv#alid'");
+    }
 }
