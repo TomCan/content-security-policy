@@ -219,4 +219,24 @@ class ContentSecurityPolicy
         }
     }
 
+    public function getMode(): int
+    {
+        return $this->mode;
+    }
+
+    public function setMode(int $mode): void
+    {
+        $this->mode = $mode;
+    }
+
+    public function getLevel(): int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): void
+    {
+        $this->level = $level;
+    }
+
 }
