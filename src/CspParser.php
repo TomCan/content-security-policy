@@ -4,6 +4,9 @@
 namespace TomCan\Csp;
 
 
+use TomCan\Csp\Exception\CspInvalidDirectiveException;
+use TomCan\Csp\Exception\CspInvalidSourceListItemException;
+
 class CspParser
 {
 

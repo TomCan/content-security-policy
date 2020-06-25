@@ -1,6 +1,6 @@
 <?php
 
-namespace TomCan\Csp;
+namespace TomCan\Csp\Exception;
 
 class CspInvalidDirectiveException extends \InvalidArgumentException
 {

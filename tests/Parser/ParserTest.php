@@ -3,6 +3,7 @@
 namespace Test\Parser;
 
 use PHPUnit\Framework\TestCase;
+use TomCan\Csp\Exception\CspInvalidDirectiveException;
 use TomCan\Csp\CspParser;
 
 class ParserTest extends TestCase
@@ -106,7 +107,7 @@ class ParserTest extends TestCase
 
     public function testInvalidDirective(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(CspInvalidDirectiveException::class);
         $parser = new CspParser();
         $result = $parser->parse('invalid-src tom');
     }
