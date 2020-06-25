@@ -9,8 +9,6 @@ use TomCan\Csp\Exception\CspInvalidSourceListItemException;
 
 class ParserTest extends TestCase
 {
-    private string $prefix;
-
     public function testParseEmpty(): void
     {
         $parser = new CspParser();
