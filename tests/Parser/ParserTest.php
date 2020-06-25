@@ -160,4 +160,11 @@ class ParserTest extends TestCase
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("style-src 'self' 'nonce-inv#alid'");
     }
+
+    public function testNonceL1(): void
+    {
+        $parser = new CspParser(CspParser::MODE_STRICT, 1);
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("style-src 'self' 'nonce-dmFsaWQgbm9uY2U='");
+    }
 }
