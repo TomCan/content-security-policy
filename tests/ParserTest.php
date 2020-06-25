@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Parser;
+namespace Test;
 
 use PHPUnit\Framework\TestCase;
 use TomCan\Csp\ContentSecurityPolicy;
