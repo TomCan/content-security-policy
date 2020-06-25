@@ -5,6 +5,7 @@ namespace Test\Parser;
 use PHPUnit\Framework\TestCase;
 use TomCan\Csp\Exception\CspInvalidDirectiveException;
 use TomCan\Csp\CspParser;
+use TomCan\Csp\Exception\CspInvalidSourceListItemException;
 
 class ParserTest extends TestCase
 {
@@ -116,12 +117,12 @@ class ParserTest extends TestCase
     {
         $parser = new CspParser();
         $predefinedSources = [  ];
-        $result = $parser->parse("default-src 'none' 'self' 'unsafe-inline' 'unsafe-eval' 'invalid'");
+        $result = $parser->parse("default-src 'none' 'self'");
         $this->assertCount(2, $result['default-src']);
-        $result = $parser->parse("style-src 'none' 'self' 'unsafe-inline' 'unsafe-eval' 'invalid'");
+        $result = $parser->parse("style-src 'none' 'self' 'unsafe-inline'");
         $this->assertCount(3, $result['style-src']);
         $this->assertArrayHasKey("'unsafe-inline'", $result['style-src']);
-        $result = $parser->parse("script-src 'none' 'self' 'unsafe-inline' 'unsafe-eval' 'invalid'");
+        $result = $parser->parse("script-src 'none' 'self' 'unsafe-inline' 'unsafe-eval'");
         $this->assertCount(4, $result['script-src']);
         $this->assertArrayHasKey("'unsafe-inline'", $result['script-src']);
         $this->assertArrayHasKey("'unsafe-eval'", $result['script-src']);
