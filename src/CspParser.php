@@ -71,7 +71,7 @@ class CspParser
                 default:
                     // we don't know this directive, throw exception
                     if ($this->mode == self::MODE_STRICT) {
-                        throw new \InvalidArgumentException('Unknown directive "' . $directive . "'");
+                        throw new CspInvalidDirectiveException('Unknown directive "' . $directive . "'");
                     }
             }
 
@@ -86,7 +86,7 @@ class CspParser
                     if (preg_match($predefined_pattern_general, $part)) {
                         // invalid pre-defined value for this directive
                         if ($this->mode == self::MODE_STRICT) {
-                            throw new \InvalidArgumentException('Unknown pre-defined source-list value ' . $part . ' for directive ' . $directive);
+                            throw new CspInvalidSourceListItemException('Invalid source-list item ' . $part . ' for directive ' . $directive);
                         }
                     } else {
                         // regular value
