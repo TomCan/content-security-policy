@@ -167,4 +167,25 @@ class ParserTest extends TestCase
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("style-src 'self' 'nonce-dmFsaWQgbm9uY2U='");
     }
+
+    public function testShaL2(): void
+    {
+        $parser = new CspParser(CspParser::MODE_STRICT, 2);
+        foreach (['sha256', 'sha384', 'sha512'] as $sha) {
+            $result = $parser->parse("style-src '".$sha."-dmFsaWQgbm9uY2U='");
+            $this->assertArrayHasKey("'".$sha."-dmFsaWQgbm9uY2U='", $result['style-src']);
+        }
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("style-src 'self' 'sha666-dmFsaWQgbm9uY2U=");
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("style-src 'self' 'sha256-inv#alid'");
+    }
+
+    public function testShaL1(): void
+    {
+        $parser = new CspParser(CspParser::MODE_STRICT, 1);
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("style-src 'self' 'sha256-dmFsaWQgbm9uY2U='");
+    }
+
 }
