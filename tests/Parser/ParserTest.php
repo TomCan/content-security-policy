@@ -116,7 +116,6 @@ class ParserTest extends TestCase
     public function testPredefinedValues(): void
     {
         $parser = new CspParser();
-        $predefinedSources = [  ];
         $result = $parser->parse("default-src 'none' 'self'");
         $this->assertCount(2, $result['default-src']);
         $result = $parser->parse("style-src 'none' 'self' 'unsafe-inline'");
@@ -124,6 +123,31 @@ class ParserTest extends TestCase
         $this->assertArrayHasKey("'unsafe-inline'", $result['style-src']);
         $result = $parser->parse("script-src 'none' 'self' 'unsafe-inline' 'unsafe-eval'");
         $this->assertCount(4, $result['script-src']);
+        $this->assertArrayHasKey("'unsafe-inline'", $result['script-src']);
+        $this->assertArrayHasKey("'unsafe-eval'", $result['script-src']);
+    }
+
+    public function testInvalidPredefinedValuesStrict(): void
+    {
+        $parser = new CspParser();
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("default-src 'self' 'invalid'");
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("default-src 'self' 'unsafe-inline'");
+    }
+
+    public function testInvalidPredefinedValuesLoose(): void
+    {
+        $parser = new CspParser(CspParser::MODE_LOOSE);
+        $result = $parser->parse("default-src 'self' 'invalid'");
+        $this->assertCount(1, $result['default-src']);
+        $result = $parser->parse("default-src 'self' 'unsafe-inline'");
+        $this->assertCount(1, $result['default-src']);
+        $result = $parser->parse("style-src 'self' 'unsafe-inline'");
+        $this->assertCount(2, $result['style-src']);
+        $this->assertArrayHasKey("'unsafe-inline'", $result['style-src']);
+        $result = $parser->parse("script-src 'self' 'unsafe-inline' 'unsafe-eval'");
+        $this->assertCount(3, $result['script-src']);
         $this->assertArrayHasKey("'unsafe-inline'", $result['script-src']);
         $this->assertArrayHasKey("'unsafe-eval'", $result['script-src']);
     }
