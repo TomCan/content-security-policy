@@ -175,9 +175,9 @@ class ContentSecurityPolicy
         }
 
         if (isset($this->directives[$directive])) {
-            $this->directives[$directive][] = $value;
+            $this->directives[$directive][$value] = $value;
         } else {
-            $this->directives[$directive] = [$value];
+            $this->directives[$directive] = [$value => $value];
         }
     }
 
@@ -188,7 +188,7 @@ class ContentSecurityPolicy
         }
         if ($value !== null) {
             if (in_array($value, self::VALID_SANDBOX_OPTIONS)) {
-                $this->directives[self::DIRECTIVE_SANDBOX][] = $value;
+                $this->directives[self::DIRECTIVE_SANDBOX][$value] = $value;
             } else {
                 throw new CspInvalidSourceListItemException(sprintf("'%s' is not a valid source list item for directive '%s'", $value, self::DIRECTIVE_SANDBOX));
             }
