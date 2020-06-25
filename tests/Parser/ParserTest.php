@@ -87,4 +87,25 @@ class ParserTest extends TestCase
         }
     }
 
+    public function testInvalidDirective(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $parser = new CspParser();
+        $result = $parser->parse('invalid-src tom');
+    }
+
+    public function testPredefinedValues(): void
+    {
+        $parser = new CspParser();
+        $predefinedSources = [  ];
+        $result = $parser->parse("default-src 'none' 'self' 'unsafe-inline' 'unsafe-eval' 'invalid'");
+        $this->assertCount(2, $result['default-src']);
+        $result = $parser->parse("style-src 'none' 'self' 'unsafe-inline' 'unsafe-eval' 'invalid'");
+        $this->assertCount(3, $result['style-src']);
+        $this->assertArrayHasKey("'unsafe-inline'", $result['style-src']);
+        $result = $parser->parse("script-src 'none' 'self' 'unsafe-inline' 'unsafe-eval' 'invalid'");
+        $this->assertCount(4, $result['script-src']);
+        $this->assertArrayHasKey("'unsafe-inline'", $result['script-src']);
+        $this->assertArrayHasKey("'unsafe-eval'", $result['script-src']);
+    }
 }
