@@ -87,6 +87,23 @@ class ParserTest extends TestCase
         }
     }
 
+    public function testMultipleDirectives(): void
+    {
+        $parser = new CspParser();
+        $result = $parser->parse('default-src tom;script-src \'self\'');
+        $this->assertCount(2, $result);
+        $this->assertArrayHasKey('default-src', $result);
+        $this->assertArrayHasKey('script-src', $result);
+
+        $result = $parser->parse('default-src tom ; script-src \'self\' ;');
+        $this->assertCount(2, $result);
+        $this->assertArrayHasKey('default-src', $result);
+        $this->assertArrayHasKey('tom', $result['default-src']);
+        $this->assertArrayHasKey('script-src', $result);
+        $this->assertArrayHasKey('\'self\'', $result['script-src']);
+
+    }
+
     public function testInvalidDirective(): void
     {
         $this->expectException(\InvalidArgumentException::class);
