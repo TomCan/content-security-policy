@@ -13,6 +13,10 @@ class CspParser
     const MODE_STRICT = 0;
     const MODE_LOOSE = 1;
 
+    // specs define base64-value as 1*( ALPHA / DIGIT / "+" / "/" )*2( "=" )
+    // basic matching, need at least 1 character, ending in 0, 1 or 2 =
+    const BASE64_PATTERN = '[A-Za-z0-9+\/]+={0,2}';
+
     private int $mode;
     private int $level;
 
@@ -51,9 +55,17 @@ class CspParser
             switch ($directive) {
                 case 'script-src':
                     $predefined[] = "unsafe-eval";
+                    if ($this->level > 1) {
+                        $predefined[] = "sha(256|384|512)-".self::BASE64_PATTERN;
+                        $predefined[] = "nonce-".self::BASE64_PATTERN;
+                    }
                 // no break
                 case 'style-src':
                     $predefined[] = "unsafe-inline";
+                    if ($this->level > 1) {
+                        $predefined[] = "sha(256|384|512)-".self::BASE64_PATTERN;
+                        $predefined[] = "nonce-".self::BASE64_PATTERN;
+                    }
                 // no break;
                 case 'default-src':
                 case 'img-src':
@@ -80,7 +92,7 @@ class CspParser
 
             // add values
             $predefined_pattern_general = '/^\'.*\'$/';
-            $predefined_pattern = '/^\'' . implode('|',$predefined) . '\'$/i';
+            $predefined_pattern = '/^\'(' . implode('|',$predefined) . ')\'$/i';
             foreach ($parts as $part) {
                 // predefined value
                 if (preg_match($predefined_pattern, $part)) {
