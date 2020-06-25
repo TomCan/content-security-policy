@@ -10,9 +10,6 @@ use TomCan\Csp\Exception\CspInvalidSourceListItemException;
 class CspParser
 {
 
-    const MODE_STRICT = 0;
-    const MODE_LOOSE = 1;
-
     // specs define base64-value as 1*( ALPHA / DIGIT / "+" / "/" )*2( "=" )
     // basic matching, need at least 1 character, ending in 0, 1 or 2 =
     const BASE64_PATTERN = '[A-Za-z0-9+\/]+={0,2}';
@@ -20,25 +17,25 @@ class CspParser
     private int $mode;
     private int $level;
 
-    public function __construct(int $mode = self::MODE_STRICT, int $level = 3)
+    public function __construct(int $mode = ContentSecurityPolicy::MODE_STRICT, int $level = 3)
     {
         $this->mode = $mode;
         $this->level = $level;
     }
 
-    public function parse($cspString): array
+    public function parse($cspString): ContentSecurityPolicy
     {
         // Trim any leading or trailing spaces
         $cspString = trim($cspString);
 
         // initialize array
-        $values = [];
+        $csp = new ContentSecurityPolicy($this->mode, $this->level);
 
         // check to see if full header, or header value only
         if (preg_match('/^content-security-policy(-report-only)?\s*:(.*)/i', $cspString, $matches)) {
             // check if report-only
             if ($matches[1]) {
-                $values['report']['report-only'] = true;
+                $csp->setReportOnly(true);
             }
             // full header, only keep second part
             $cspString = trim($matches[2]);
@@ -49,95 +46,18 @@ class CspParser
         foreach ($items as $item) {
             // split on space
             $parts = explode(" ", trim($item));
-            // first part contains the directive
-            $directive = strtolower(array_shift($parts));
-            $predefined = [];
-            $predefinedDelimiter = "'";
-            $allowNonPredefinded = true;
-            switch ($directive) {
-                case 'script-src':
-                    $predefined[] = "unsafe-eval";
-                    if ($this->level > 1) {
-                        $predefined[] = "sha(256|384|512)-".self::BASE64_PATTERN;
-                        $predefined[] = "nonce-".self::BASE64_PATTERN;
-                    }
-                // no break
-                case 'style-src':
-                    $predefined[] = "unsafe-inline";
-                    if ($this->level > 1) {
-                        $predefined[] = "sha(256|384|512)-".self::BASE64_PATTERN;
-                        $predefined[] = "nonce-".self::BASE64_PATTERN;
-                    }
-                // no break;
-                case 'default-src':
-                case 'img-src':
-                case 'font-src':
-                case 'connect-src':
-                case 'media-src':
-                case 'object-src':
-                case 'frame-src':
-                    $predefined[] = "none";
-                    $predefined[] = "self";
-                    break;
-                case 'report-uri':
-                case 'report-to':
-                    break;
-                case 'sandbox':
-                    $predefinedDelimiter = '';
-                    $allowNonPredefinded = false;
-                    $predefined = [
-                        'allow-forms',
-                        'allow-same-origin',
-                        'allow-scripts',
-                        'allow-popups',
-                        'allow-modals',
-                        'allow-orientation-lock',
-                        'allow-pointer-lock',
-                        'allow-presentation',
-                        'allow-popups-to-escape-sandbox',
-                        'allow-top-navigation',
-                    ];
-                    // define directive in output, even when no values are specified
-                    $values[$directive] = [];
-                    break;
-                case '':
-                    // empty part, skip
-                    break;
-                default:
-                    // we don't know this directive, throw exception
-                    if ($this->mode == self::MODE_STRICT) {
-                        throw new CspInvalidDirectiveException('Unknown directive "' . $directive . "'");
-                    }
-            }
 
-            // add values
-            $predefined_pattern_general = '/^'.$predefinedDelimiter.'.*'.$predefinedDelimiter.'$/';
-            $predefined_pattern = '/^'.$predefinedDelimiter.'(' . implode('|',$predefined) . ')'.$predefinedDelimiter.'$/i';
-            foreach ($parts as $part) {
-                // predefined value
-                if (preg_match($predefined_pattern, $part)) {
-                    $values[$directive][$part] = $part;
-                } else {
-                    if (preg_match($predefined_pattern_general, $part)) {
-                        // invalid pre-defined value for this directive
-                        if ($this->mode == self::MODE_STRICT) {
-                            throw new CspInvalidSourceListItemException('Invalid source-list item ' . $part . ' for directive ' . $directive);
-                        }
-                    } else {
-                        // regular value
-                        if ($allowNonPredefinded == true) {
-                            $values[$directive][$part] = $part;
-                        } else {
-                            if ($this->mode == self::MODE_STRICT) {
-                                throw new CspInvalidSourceListItemException('Invalid source-list item ' . $part . ' for directive ' . $directive);
-                            }
-                        }
-                    }
+            $directive = strtolower(array_shift($parts));
+            // sandbox can have empty value
+            if (count($parts) == 0 && $directive == ContentSecurityPolicy::DIRECTIVE_SANDBOX) {
+                $csp->addToDirective($directive, null);
+            } else {
+                foreach ($parts as $part) {
+                    $csp->addToDirective($directive, $part);
                 }
             }
-
         }
 
-        return $values;
+        return $csp;
     }
 }
