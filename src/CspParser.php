@@ -34,10 +34,10 @@ class CspParser
             $predefined = [];
             switch ($directive) {
                 case 'script-src':
-                    $predefined[] = "'unsafe-eval'";
+                    $predefined[] = "unsafe-eval";
                 // no break
                 case 'style-src':
-                    $predefined[] = "'unsafe-inline'";
+                    $predefined[] = "unsafe-inline";
                 // no break;
                 case 'default-src':
                 case 'img-src':
@@ -46,8 +46,8 @@ class CspParser
                 case 'media-src':
                 case 'object-src':
                 case 'frame-src':
-                    $predefined[] = "'none'";
-                    $predefined[] = "'self'";
+                    $predefined[] = "none";
+                    $predefined[] = "self";
                     break;
                 case 'report-uri':
                 case 'report-to':
@@ -61,14 +61,19 @@ class CspParser
             }
 
             // add values
+            $predefined_pattern_general = '/^\'.*\'$/';
+            $predefined_pattern = '/^\'' . implode('|',$predefined) . '\'$/i';
             foreach ($parts as $part) {
-                if (substr($part, 0, 1) == "'" && substr($part, -1, 1) == "'") {
-                    // predefined value
-                    if (in_array($part, $predefined)) {
+                // predefined value
+                if (preg_match($predefined_pattern, $part)) {
+                    $values[$directive][$part] = $part;
+                } else {
+                    if (preg_match($predefined_pattern_general, $part)) {
+                        // invalid pre-defined value for this directive
+                    } else {
+                        // regular value
                         $values[$directive][$part] = $part;
                     }
-                } else {
-                    $values[$directive][$part] = $part;
                 }
             }
 
