@@ -77,8 +77,8 @@ class ContentSecurityPolicy
     const PAT_SOURCE_SELF = "'self'";
     const PAT_SOURCE_UNSAFE_EVAL = "'unsafe-eval'";
     const PAT_SOURCE_UNSAFE_INLINE = "'unsafe-inline'";
-    const PAT_SOURCE_SHA = "sha(256|384|512)-".self::PAT_BASE64;
-    const PAT_SOURCE_NONCE = "nonce-".self::PAT_BASE64;
+    const PAT_SOURCE_SHA = "'sha(256|384|512)-".self::PAT_BASE64."'";
+    const PAT_SOURCE_NONCE = "'nonce-".self::PAT_BASE64."'";
 
     private $directives = [];
     private $mode;
