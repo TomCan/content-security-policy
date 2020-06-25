@@ -70,6 +70,7 @@ class CspParser
                 } else {
                     if (preg_match($predefined_pattern_general, $part)) {
                         // invalid pre-defined value for this directive
+                        throw new \InvalidArgumentException('Unknown pre-defined source-list value ' . $part . ' for directive '.$directive);
                     } else {
                         // regular value
                         $values[$directive][$part] = $part;
