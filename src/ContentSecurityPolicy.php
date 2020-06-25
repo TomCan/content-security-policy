@@ -210,4 +210,13 @@ class ContentSecurityPolicy
         return $this->directives;
     }
 
+    public function getDirective(string $directive): ?array
+    {
+        if (isset($this->directives[$directive])) {
+            return $this->directives[$directive];
+        } else {
+            return null;
+        }
+    }
+
 }
