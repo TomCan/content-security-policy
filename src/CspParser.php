@@ -52,6 +52,8 @@ class CspParser
             // first part contains the directive
             $directive = strtolower(array_shift($parts));
             $predefined = [];
+            $predefinedDelimiter = "'";
+            $allowNonPredefinded = true;
             switch ($directive) {
                 case 'script-src':
                     $predefined[] = "unsafe-eval";
@@ -80,6 +82,24 @@ class CspParser
                 case 'report-uri':
                 case 'report-to':
                     break;
+                case 'sandbox':
+                    $predefinedDelimiter = '';
+                    $allowNonPredefinded = false;
+                    $predefined = [
+                        'allow-forms',
+                        'allow-same-origin',
+                        'allow-scripts',
+                        'allow-popups',
+                        'allow-modals',
+                        'allow-orientation-lock',
+                        'allow-pointer-lock',
+                        'allow-presentation',
+                        'allow-popups-to-escape-sandbox',
+                        'allow-top-navigation',
+                    ];
+                    // define directive in output, even when no values are specified
+                    $values[$directive] = [];
+                    break;
                 case '':
                     // empty part, skip
                     break;
@@ -91,8 +111,8 @@ class CspParser
             }
 
             // add values
-            $predefined_pattern_general = '/^\'.*\'$/';
-            $predefined_pattern = '/^\'(' . implode('|',$predefined) . ')\'$/i';
+            $predefined_pattern_general = '/^'.$predefinedDelimiter.'.*'.$predefinedDelimiter.'$/';
+            $predefined_pattern = '/^'.$predefinedDelimiter.'(' . implode('|',$predefined) . ')'.$predefinedDelimiter.'$/i';
             foreach ($parts as $part) {
                 // predefined value
                 if (preg_match($predefined_pattern, $part)) {
@@ -105,7 +125,13 @@ class CspParser
                         }
                     } else {
                         // regular value
-                        $values[$directive][$part] = $part;
+                        if ($allowNonPredefinded == true) {
+                            $values[$directive][$part] = $part;
+                        } else {
+                            if ($this->mode == self::MODE_STRICT) {
+                                throw new CspInvalidSourceListItemException('Invalid source-list item ' . $part . ' for directive ' . $directive);
+                            }
+                        }
                     }
                 }
             }

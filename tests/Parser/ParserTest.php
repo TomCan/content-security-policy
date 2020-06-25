@@ -150,6 +150,21 @@ class ParserTest extends TestCase
         $this->assertArrayHasKey("'unsafe-eval'", $result['script-src']);
     }
 
+    public function testSandbox(): void
+    {
+        $parser = new CspParser();
+        $result = $parser->parse('sandbox');
+        $this->assertCount(1, $result);
+        $this->assertCount(0, $result['sandbox']);
+        $result = $parser->parse('sandbox allow-forms');
+        $this->assertCount(1, $result);
+        $this->assertCount(1, $result['sandbox']);
+        $result = $parser->parse('sandbox allow-forms allow-same-origin allow-scripts allow-popups allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-popups-to-escape-sandbox allow-top-navigation');
+        $this->assertCount(10, $result['sandbox']);
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse('sandbox invalid');
+    }
+
     public function testNonceL2(): void
     {
         $parser = new CspParser(CspParser::MODE_STRICT, 2);
