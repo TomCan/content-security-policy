@@ -20,4 +20,4 @@ The major version of this library refers to the CSP Level it is compatible with.
 
 v1.0.0 is CSP Level 1 compatible.  
 v2.0.0 is CSP Level 2 compatible.  
-v3.0.0 in not yet fully Level 3 compatible.  
+v3.0.1-alpha in not yet fully Level 3 compatible.  
