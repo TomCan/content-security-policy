@@ -19,16 +19,22 @@ class CspTest extends TestCase
         }
     }
 
-    public function testInvalidConstructor()
+    public function testInvalidConstructorLevelLow()
     {
         $this->expectException(\InvalidArgumentException::class);
         $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 0);
+    }
 
+    public function testInvalidConstructorLevelHigh()
+    {
         $this->expectException(\InvalidArgumentException::class);
         $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 4);
+    }
 
+    public function testInvalidConstructorModeInvalid()
+    {
         $this->expectException(\InvalidArgumentException::class);
-        $csp = new ContentSecurityPolicy(2, 1);
+        $csp = new ContentSecurityPolicy(9, 1);
     }
 
     public function testFromCspString()
@@ -57,6 +63,8 @@ class CspTest extends TestCase
         $csp->addToDirective('sandbox', 'allow-popups');
         $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; sandbox allow-popups;", (string)$csp);
 
+        $csp->addToDirective('report-to', 'my-endpoint');
+        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; report-to my-endpoint; sandbox allow-popups;", (string)$csp);
     }
 
     public function testToCspStringFull()
@@ -71,4 +79,20 @@ class CspTest extends TestCase
         $this->assertEquals("Content-Security-Policy-Report-Only: default-src 'self';", (string)$csp);
     }
 
+    public function testNonExistingDirective(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $this->assertNull($csp->getDirective('default-src'));
+    }
+
+    public function testSettersAndGetters(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $csp->setLevel(1);
+        $this->assertEquals(1, $csp->getLevel());
+        $csp->setMode(ContentSecurityPolicy::MODE_LOOSE);
+        $this->assertEquals(ContentSecurityPolicy::MODE_LOOSE, $csp->getMode());
+        $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_VALUE_ONLY);
+        $this->assertEquals(ContentSecurityPolicy::OUTPUT_VALUE_ONLY, $csp->getOutputMode());
+    }
 }

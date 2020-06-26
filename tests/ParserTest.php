@@ -123,14 +123,25 @@ class ParserTest extends TestCase
         $this->assertArrayHasKey("'unsafe-eval'", $result->getDirective('script-src'));
     }
 
-    public function testInvalidPredefinedValuesStrict(): void
+    public function testInvalidPredefinedValuesStrictInvalid(): void
     {
         $parser = new CspParser();
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("default-src 'self' 'invalid'");
+    }
 
+    public function testInvalidPredefinedValuesStrictInvalidForThis(): void
+    {
+        $parser = new CspParser();
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("default-src 'self' 'unsafe-inline'");
+    }
+
+    public function testInvalidPredefinedValuesStrictInvalidForNotAllowed(): void
+    {
+        $parser = new CspParser();
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $result = $parser->parse("report-to 'my-endpoint'");
     }
 
     public function testInvalidPredefinedValuesLoose(): void
@@ -194,13 +205,21 @@ class ParserTest extends TestCase
     {
         $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
         foreach (['sha256', 'sha384', 'sha512'] as $sha) {
-            $result = $parser->parse("style-src '".$sha."-dmFsaWQgbm9uY2U='");
-            $this->assertArrayHasKey("'".$sha."-dmFsaWQgbm9uY2U='", $result->getDirective('style-src'));
+            $result = $parser->parse("style-src '" . $sha . "-dmFsaWQgbm9uY2U='");
+            $this->assertArrayHasKey("'" . $sha . "-dmFsaWQgbm9uY2U='", $result->getDirective('style-src'));
         }
+    }
 
+    public function testShaL2InvalidAlgo(): void
+    {
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
         $this->expectException(CspInvalidSourceListItemException::class);
-        $result = $parser->parse("style-src 'self' 'sha666-dmFsaWQgbm9uY2U=");
+        $result = $parser->parse("style-src 'self' 'sha666-dmFsaWQgbm9uY2U='");
+    }
 
+    public function testShaL2InvalidBase64(): void
+    {
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("style-src 'self' 'sha256-inv#alid'");
     }
