@@ -80,11 +80,16 @@ class ContentSecurityPolicy
     const PAT_SOURCE_SHA = "'sha(256|384|512)-".self::PAT_BASE64."'";
     const PAT_SOURCE_NONCE = "'nonce-".self::PAT_BASE64."'";
 
+    const OUTPUT_FULL_HEADER = 0;
+    const OUTPUT_VALUE_ONLY = 1;
+
     private $directives = [];
     private $mode;
     private $level;
 
     private bool $reportOnly = false;
+
+    private $outputMode = self::OUTPUT_FULL_HEADER;
 
     public static function fromCspString(string $cspString, array $options = []): ContentSecurityPolicy
     {
@@ -239,4 +244,32 @@ class ContentSecurityPolicy
         $this->level = $level;
     }
 
+    public function getOutputMode(): int
+    {
+        return $this->outputMode;
+    }
+
+    public function setOutputMode(int $outputMode): void
+    {
+        $this->outputMode = $outputMode;
+    }
+
+    public function __toString(): string
+    {
+        $output = "";
+        foreach (self::VALID_DIRECTIVES as $directive) {
+            if (isset($this->directives[$directive]))
+            $output .= trim($directive . ' ' . implode(' ', $this->directives[$directive])) . '; ';
+        }
+
+        if ($this->outputMode == self::OUTPUT_FULL_HEADER) {
+            if ($this->reportOnly) {
+                return 'Content-Security-Policy-Report-Only: ' . trim($output);
+            } else {
+                return 'Content-Security-Policy: ' . trim($output);
+            }
+        } else {
+            return trim($output);
+        }
+    }
 }

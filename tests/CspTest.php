@@ -37,4 +37,38 @@ class CspTest extends TestCase
         $this->assertInstanceOf(ContentSecurityPolicy::class, $csp);
     }
 
+    public function testToCspString()
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_VALUE_ONLY);
+
+        $csp->addToDirective('default-src', "'self'");
+        $this->assertEquals("default-src 'self';", (string)$csp);
+
+        $csp->addToDirective('default-src', "https://www.tom.be");
+        $this->assertEquals("default-src 'self' https://www.tom.be;", (string)$csp);
+
+        $csp->addToDirective('script-src', "'unsafe-inline'");
+        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline';", (string)$csp);
+
+        $csp->addToDirective('sandbox', null);
+        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; sandbox;", (string)$csp);
+
+        $csp->addToDirective('sandbox', 'allow-popups');
+        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; sandbox allow-popups;", (string)$csp);
+
+    }
+
+    public function testToCspStringFull()
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_FULL_HEADER);
+
+        $csp->addToDirective('default-src', "'self'");
+        $this->assertEquals("Content-Security-Policy: default-src 'self';", (string)$csp);
+
+        $csp->setReportOnly(true);
+        $this->assertEquals("Content-Security-Policy-Report-Only: default-src 'self';", (string)$csp);
+    }
+
 }
