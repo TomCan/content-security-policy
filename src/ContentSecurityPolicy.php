@@ -79,6 +79,8 @@ class ContentSecurityPolicy
     const PAT_SOURCE_UNSAFE_INLINE = "'unsafe-inline'";
     const PAT_SOURCE_SHA = "'sha(256|384|512)-".self::PAT_BASE64."'";
     const PAT_SOURCE_NONCE = "'nonce-".self::PAT_BASE64."'";
+    const PAT_SOURCE_STRICT_DYNAMIC = "'strict-dynamic'";
+    const PAT_SOURCE_UNSAFE_HASHES = "'unsafe-hashes'";
 
     const OUTPUT_FULL_HEADER = 0;
     const OUTPUT_VALUE_ONLY = 1;
@@ -151,6 +153,10 @@ class ContentSecurityPolicy
                     if ($this->level > 1) {
                         $patterns[] = self::PAT_SOURCE_SHA;
                         $patterns[] = self::PAT_SOURCE_NONCE;
+                    }
+                    if ($this->level > 2) {
+                        $patterns[] = self::PAT_SOURCE_STRICT_DYNAMIC;
+                        $patterns[] = self::PAT_SOURCE_UNSAFE_HASHES;
                     }
                     break;
 

@@ -231,4 +231,12 @@ class ParserTest extends TestCase
         $result = $parser->parse("style-src 'self' 'sha256-dmFsaWQgbm9uY2U='");
     }
 
+    public function testScriptPredefinedL3(): void
+    {
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 3);
+        $result = $parser->parse("script-src 'strict-dynamic' 'unsafe-hashes'");
+        $this->assertArrayHasKey("'strict-dynamic'", $result->getDirective('script-src'));
+        $this->assertArrayHasKey("'unsafe-hashes'", $result->getDirective('script-src'));
+    }
+
 }
