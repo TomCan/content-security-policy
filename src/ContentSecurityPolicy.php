@@ -22,6 +22,9 @@ class ContentSecurityPolicy
     const DIRECTIVE_REPORT_TO = 'report-to';
     const DIRECTIVE_REPORT_URI = 'report-uri';
     const DIRECTIVE_SANDBOX = 'sandbox';
+    const DIRECTIVE_WORKER_SRC = 'worker-src';
+    const DIRECTIVE_MANIFEST_SRC = 'manifest-src';
+    const DIRECTIVE_PREFETCH_SRC = 'prefetch-src';
 
     const VALID_DIRECTIVES = [
         self::DIRECTIVE_DEFAULT_SRC,
@@ -36,6 +39,9 @@ class ContentSecurityPolicy
         self::DIRECTIVE_REPORT_TO,
         self::DIRECTIVE_REPORT_URI,
         self::DIRECTIVE_SANDBOX,
+        self::DIRECTIVE_WORKER_SRC,
+        self::DIRECTIVE_MANIFEST_SRC,
+        self::DIRECTIVE_PREFETCH_SRC,
     ];
 
     const MODE_STRICT = 0;
@@ -158,6 +164,16 @@ class ContentSecurityPolicy
                         $patterns[] = self::PAT_SOURCE_STRICT_DYNAMIC;
                         $patterns[] = self::PAT_SOURCE_UNSAFE_HASHES;
                     }
+                    break;
+
+                case 'worker-src':
+                case 'manifest-src':
+                case 'prefetch-src':
+                    $patterns[] = self::PAT_SOURCE_UNSAFE_EVAL;
+                    $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
+                    $patterns[] = self::PAT_SOURCE_SHA;
+                    $patterns[] = self::PAT_SOURCE_NONCE;
+                    $patterns[] = self::PAT_SOURCE_UNSAFE_HASHES;
                     break;
 
                 case 'style-src':

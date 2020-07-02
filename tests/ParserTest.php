@@ -69,6 +69,9 @@ class ParserTest extends TestCase
                 'object-src',
                 'frame-src',
                 'report-to',
+                'worker-src',
+                'manifest-src',
+                'prefetch-src',
             ];
 
         $parser = new CspParser();
@@ -237,6 +240,16 @@ class ParserTest extends TestCase
         $result = $parser->parse("script-src 'strict-dynamic' 'unsafe-hashes'");
         $this->assertArrayHasKey("'strict-dynamic'", $result->getDirective('script-src'));
         $this->assertArrayHasKey("'unsafe-hashes'", $result->getDirective('script-src'));
+    }
+
+    public function testWorkerManifestPrefetchPredefined(): void
+    {
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 3);
+        foreach (['worker-src', 'prefetch-src', 'manifest-src'] as $directive) {
+            $result = $parser->parse($directive . " 'self' 'unsafe-hashes'");
+            $this->assertArrayHasKey("'self'", $result->getDirective($directive));
+            $this->assertArrayHasKey("'unsafe-hashes'", $result->getDirective($directive));
+        }
     }
 
 }
