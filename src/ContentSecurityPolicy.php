@@ -47,10 +47,6 @@ class ContentSecurityPolicy
     const MODE_STRICT = 0;
     const MODE_LOOSE = 1;
 
-    const LEVEL_1 = 1;
-    const LEVEL_2 = 2;
-    const LEVEL_3 = 3;
-
     const SANDBOX_ALLOW_FORMS = 'allow-forms';
     const SANDBOX_ALLOW_SAME_ORIGIN = 'allow-same-origin';
     const SANDBOX_ALLOW_SCRIPTS = 'allow-scripts';
@@ -93,7 +89,6 @@ class ContentSecurityPolicy
 
     private $directives = [];
     private $mode;
-    private $level;
 
     private bool $reportOnly = false;
 
@@ -102,24 +97,17 @@ class ContentSecurityPolicy
     public static function fromCspString(string $cspString, array $options = []): ContentSecurityPolicy
     {
         $parser = new CspParser(
-            $options['mode'] ?? self::MODE_STRICT,
-            $options['level'] ?? self::LEVEL_3
+            $options['mode'] ?? self::MODE_STRICT
         );
         return $parser->parse($cspString);
     }
 
-    public function __construct(int $mode, int $level)
+    public function __construct(int $mode)
     {
         if ($mode != self::MODE_STRICT && $mode != self::MODE_LOOSE) {
             throw new \InvalidArgumentException('Invalid mode specified');
         }
-
-        if ($level < self::LEVEL_1 || $level > self::LEVEL_3) {
-            throw new \InvalidArgumentException('Invalid level specified');
-        }
-
         $this->mode = $mode;
-        $this->level = $level;
     }
 
     public function addToDirective(string $directive, ?string $value): void
@@ -156,14 +144,10 @@ class ContentSecurityPolicy
                 case 'script-src':
                     $patterns[] = self::PAT_SOURCE_UNSAFE_EVAL;
                     $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
-                    if ($this->level > 1) {
-                        $patterns[] = self::PAT_SOURCE_SHA;
-                        $patterns[] = self::PAT_SOURCE_NONCE;
-                    }
-                    if ($this->level > 2) {
-                        $patterns[] = self::PAT_SOURCE_STRICT_DYNAMIC;
-                        $patterns[] = self::PAT_SOURCE_UNSAFE_HASHES;
-                    }
+                    $patterns[] = self::PAT_SOURCE_SHA;
+                    $patterns[] = self::PAT_SOURCE_NONCE;
+                    $patterns[] = self::PAT_SOURCE_STRICT_DYNAMIC;
+                    $patterns[] = self::PAT_SOURCE_UNSAFE_HASHES;
                     break;
 
                 case 'worker-src':
@@ -178,10 +162,8 @@ class ContentSecurityPolicy
 
                 case 'style-src':
                     $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
-                    if ($this->level > 1) {
-                        $patterns[] = self::PAT_SOURCE_SHA;
-                        $patterns[] = self::PAT_SOURCE_NONCE;
-                    }
+                    $patterns[] = self::PAT_SOURCE_SHA;
+                    $patterns[] = self::PAT_SOURCE_NONCE;
                     break;
 
                 case 'report-uri':
@@ -254,16 +236,6 @@ class ContentSecurityPolicy
     public function setMode(int $mode): void
     {
         $this->mode = $mode;
-    }
-
-    public function getLevel(): int
-    {
-        return $this->level;
-    }
-
-    public function setLevel(int $level): void
-    {
-        $this->level = $level;
     }
 
     public function getOutputMode(): int
