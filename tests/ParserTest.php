@@ -186,7 +186,7 @@ class ParserTest extends TestCase
 
     public function testNonceL2(): void
     {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT);
         $result = $parser->parse("style-src 'self' 'nonce-dmFsaWQgbm9uY2U='");
         $this->assertArrayHasKey("'nonce-dmFsaWQgbm9uY2U='", $result->getDirective('style-src'));
 
@@ -197,16 +197,9 @@ class ParserTest extends TestCase
         $result = $parser->parse("style-src 'self' 'nonce-inv#alid'");
     }
 
-    public function testNonceL1(): void
-    {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 1);
-        $this->expectException(CspInvalidSourceListItemException::class);
-        $result = $parser->parse("style-src 'self' 'nonce-dmFsaWQgbm9uY2U='");
-    }
-
     public function testShaL2(): void
     {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT);
         foreach (['sha256', 'sha384', 'sha512'] as $sha) {
             $result = $parser->parse("style-src '" . $sha . "-dmFsaWQgbm9uY2U='");
             $this->assertArrayHasKey("'" . $sha . "-dmFsaWQgbm9uY2U='", $result->getDirective('style-src'));
@@ -215,28 +208,21 @@ class ParserTest extends TestCase
 
     public function testShaL2InvalidAlgo(): void
     {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT);
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("style-src 'self' 'sha666-dmFsaWQgbm9uY2U='");
     }
 
     public function testShaL2InvalidBase64(): void
     {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 2);
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT);
         $this->expectException(CspInvalidSourceListItemException::class);
         $result = $parser->parse("style-src 'self' 'sha256-inv#alid'");
     }
 
-    public function testShaL1(): void
-    {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 1);
-        $this->expectException(CspInvalidSourceListItemException::class);
-        $result = $parser->parse("style-src 'self' 'sha256-dmFsaWQgbm9uY2U='");
-    }
-
     public function testScriptPredefinedL3(): void
     {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 3);
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT);
         $result = $parser->parse("script-src 'strict-dynamic' 'unsafe-hashes'");
         $this->assertArrayHasKey("'strict-dynamic'", $result->getDirective('script-src'));
         $this->assertArrayHasKey("'unsafe-hashes'", $result->getDirective('script-src'));
@@ -244,7 +230,7 @@ class ParserTest extends TestCase
 
     public function testWorkerManifestPrefetchPredefined(): void
     {
-        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT, 3);
+        $parser = new CspParser(ContentSecurityPolicy::MODE_STRICT);
         foreach (['worker-src', 'prefetch-src', 'manifest-src'] as $directive) {
             $result = $parser->parse($directive . " 'self' 'unsafe-hashes'");
             $this->assertArrayHasKey("'self'", $result->getDirective($directive));

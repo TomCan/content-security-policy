@@ -11,24 +11,9 @@ class CspTest extends TestCase
     public function testConstructor()
     {
         foreach ([ContentSecurityPolicy::MODE_STRICT, ContentSecurityPolicy::MODE_LOOSE] as $mode) {
-            foreach ([ContentSecurityPolicy::LEVEL_1, ContentSecurityPolicy::LEVEL_2, ContentSecurityPolicy::LEVEL_3] as $level) {
-                $csp = new ContentSecurityPolicy($mode, $level);
-                $this->assertEquals($mode, $csp->getMode());
-                $this->assertEquals($level, $csp->getLevel());
-            }
+            $csp = new ContentSecurityPolicy($mode);
+            $this->assertEquals($mode, $csp->getMode());
         }
-    }
-
-    public function testInvalidConstructorLevelLow()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 0);
-    }
-
-    public function testInvalidConstructorLevelHigh()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 4);
     }
 
     public function testInvalidConstructorModeInvalid()
@@ -45,7 +30,7 @@ class CspTest extends TestCase
 
     public function testToCspString()
     {
-        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
         $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_VALUE_ONLY);
 
         $csp->addToDirective('default-src', "'self'");
@@ -69,7 +54,7 @@ class CspTest extends TestCase
 
     public function testToCspStringFull()
     {
-        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
         $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_FULL_HEADER);
 
         $csp->addToDirective('default-src', "'self'");
@@ -81,15 +66,13 @@ class CspTest extends TestCase
 
     public function testNonExistingDirective(): void
     {
-        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
         $this->assertNull($csp->getDirective('default-src'));
     }
 
     public function testSettersAndGetters(): void
     {
-        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT, 3);
-        $csp->setLevel(1);
-        $this->assertEquals(1, $csp->getLevel());
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
         $csp->setMode(ContentSecurityPolicy::MODE_LOOSE);
         $this->assertEquals(ContentSecurityPolicy::MODE_LOOSE, $csp->getMode());
         $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_VALUE_ONLY);
