@@ -78,4 +78,13 @@ class CspTest extends TestCase
         $csp->setOutputMode(ContentSecurityPolicy::OUTPUT_VALUE_ONLY);
         $this->assertEquals(ContentSecurityPolicy::OUTPUT_VALUE_ONLY, $csp->getOutputMode());
     }
+
+    public function testBaseUriDirective(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        foreach (["'self'", "'unsafe-eval'", "'nonce-ThisIsANonce123=='", 'http:', 'https://www.tom.be'] as $item) {
+            $csp->addToDirective('base-uri', $item);
+            $this->assertArrayHasKey($item, $csp->getDirective('base-uri'));
+        }
+    }
 }

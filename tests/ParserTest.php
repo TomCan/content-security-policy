@@ -69,6 +69,7 @@ class ParserTest extends TestCase
                 'object-src',
                 'frame-src',
                 'report-to',
+                'base-uri',
                 'worker-src',
                 'manifest-src',
                 'prefetch-src',
