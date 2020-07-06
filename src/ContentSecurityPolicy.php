@@ -32,6 +32,8 @@ class ContentSecurityPolicy
     const DIRECTIVE_SCRIPT_SRC_ATTR = 'script-src-attr';
     const DIRECTIVE_SCRIPT_SRC_ELEM = 'script-src-elem';
     const DIRECTIVE_STYLE_SRC = 'style-src';
+    const DIRECTIVE_STYLE_SRC_ATTR = 'style-src-attr';
+    const DIRECTIVE_STYLE_SRC_ELEM = 'style-src-elem';
     const DIRECTIVE_WORKER_SRC = 'worker-src';
 
     const VALID_DIRECTIVES = [
@@ -57,6 +59,8 @@ class ContentSecurityPolicy
         self::DIRECTIVE_SCRIPT_SRC_ATTR,
         self::DIRECTIVE_SCRIPT_SRC_ELEM,
         self::DIRECTIVE_STYLE_SRC,
+        self::DIRECTIVE_STYLE_SRC_ATTR,
+        self::DIRECTIVE_STYLE_SRC_ELEM,
         self::DIRECTIVE_WORKER_SRC,
     ];
 
@@ -191,6 +195,8 @@ class ContentSecurityPolicy
                     break;
 
                 case 'style-src':
+                case 'style-src-attr':
+                case 'style-src-elem':
                     $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
                     $patterns[] = self::PAT_SOURCE_SHA;
                     $patterns[] = self::PAT_SOURCE_NONCE;
