@@ -29,6 +29,8 @@ class ContentSecurityPolicy
     const DIRECTIVE_REPORT_URI = 'report-uri';
     const DIRECTIVE_SANDBOX = 'sandbox';
     const DIRECTIVE_SCRIPT_SRC = 'script-src';
+    const DIRECTIVE_SCRIPT_SRC_ATTR = 'script-src-attr';
+    const DIRECTIVE_SCRIPT_SRC_ELEM = 'script-src-elem';
     const DIRECTIVE_STYLE_SRC = 'style-src';
     const DIRECTIVE_WORKER_SRC = 'worker-src';
 
@@ -52,6 +54,8 @@ class ContentSecurityPolicy
         self::DIRECTIVE_REPORT_URI,
         self::DIRECTIVE_SANDBOX,
         self::DIRECTIVE_SCRIPT_SRC,
+        self::DIRECTIVE_SCRIPT_SRC_ATTR,
+        self::DIRECTIVE_SCRIPT_SRC_ELEM,
         self::DIRECTIVE_STYLE_SRC,
         self::DIRECTIVE_WORKER_SRC,
     ];
@@ -155,6 +159,8 @@ class ContentSecurityPolicy
             ];
             switch ($directive) {
                 case 'script-src':
+                case 'script-src-attr':
+                case 'script-src-elem':
                 case 'base-uri':
                 case 'child-src':
                 case 'form-action':
