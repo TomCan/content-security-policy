@@ -124,4 +124,12 @@ class CspTest extends TestCase
         }
     }
 
+    public function testPluginTypesDirective(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        foreach (["'none'", "application/json", "image/svg+xml"] as $item) {
+            $csp->addToDirective('plugin-types', $item);
+            $this->assertArrayHasKey($item, $csp->getDirective('plugin-types'));
+        }
+    }
 }

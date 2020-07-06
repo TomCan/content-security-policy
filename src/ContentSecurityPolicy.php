@@ -23,6 +23,7 @@ class ContentSecurityPolicy
     const DIRECTIVE_MEDIA_SRC = 'media-src';
     const DIRECTIVE_NAVIGATE_TO = 'navigate-to';
     const DIRECTIVE_OBJECT_SRC = 'object-src';
+    const DIRECTIVE_PLUGIN_TYPES = 'plugin-types';
     const DIRECTIVE_PREFETCH_SRC = 'prefetch-src';
     const DIRECTIVE_REPORT_TO = 'report-to';
     const DIRECTIVE_REPORT_URI = 'report-uri';
@@ -45,6 +46,7 @@ class ContentSecurityPolicy
         self::DIRECTIVE_MEDIA_SRC,
         self::DIRECTIVE_NAVIGATE_TO,
         self::DIRECTIVE_OBJECT_SRC,
+        self::DIRECTIVE_PLUGIN_TYPES,
         self::DIRECTIVE_PREFETCH_SRC,
         self::DIRECTIVE_REPORT_TO,
         self::DIRECTIVE_REPORT_URI,
@@ -87,6 +89,7 @@ class ContentSecurityPolicy
 
     const PAT_SOURCE_NONCE = "'nonce-".self::PAT_BASE64."'";
     const PAT_SOURCE_NONE = "'none'";
+    const PAT_PLUGIN_TYPE = '[-\w.]+/[-\w.\+]+$';
     const PAT_SOURCE_SELF = "'self'";
     const PAT_SOURCE_SHA = "'sha(256|384|512)-".self::PAT_BASE64."'";
     const PAT_SOURCE_STRICT_DYNAMIC = "'strict-dynamic'";
@@ -172,6 +175,13 @@ class ContentSecurityPolicy
                     $patterns[] = self::PAT_SOURCE_SHA;
                     $patterns[] = self::PAT_SOURCE_NONCE;
                     $patterns[] = self::PAT_SOURCE_UNSAFE_HASHES;
+                    break;
+
+                case 'plugin-type':
+                    $patterns = [
+                        self::PAT_SOURCE_NONE,
+                        self::PAT_PLUGIN_TYPE,
+                    ];
                     break;
 
                 case 'style-src':
