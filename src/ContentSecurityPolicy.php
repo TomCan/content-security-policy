@@ -34,6 +34,7 @@ class ContentSecurityPolicy
     const DIRECTIVE_STYLE_SRC = 'style-src';
     const DIRECTIVE_STYLE_SRC_ATTR = 'style-src-attr';
     const DIRECTIVE_STYLE_SRC_ELEM = 'style-src-elem';
+    const DIRECTIVE_UPGRADE_INSECURE_REQUESTS = 'upgrade-insecure-requests';
     const DIRECTIVE_WORKER_SRC = 'worker-src';
 
     const VALID_DIRECTIVES = [
@@ -61,6 +62,7 @@ class ContentSecurityPolicy
         self::DIRECTIVE_STYLE_SRC,
         self::DIRECTIVE_STYLE_SRC_ATTR,
         self::DIRECTIVE_STYLE_SRC_ELEM,
+        self::DIRECTIVE_UPGRADE_INSECURE_REQUESTS,
         self::DIRECTIVE_WORKER_SRC,
     ];
 
@@ -142,6 +144,9 @@ class ContentSecurityPolicy
         switch ($directive) {
             case self::DIRECTIVE_SANDBOX:
                 $this->addToSandbox($value);
+                break;
+            case self::DIRECTIVE_UPGRADE_INSECURE_REQUESTS:
+                $this->addNoValueDirective($directive);
                 break;
 
             default:
@@ -238,6 +243,11 @@ class ContentSecurityPolicy
                 throw new CspInvalidSourceListItemException(sprintf("'%s' is not a valid source list item for directive '%s'", $value, self::DIRECTIVE_SANDBOX));
             }
         }
+    }
+
+    private function addNoValueDirective($directive)
+    {
+        $this->directives[$directive] = [];
     }
 
     public function setReportOnly(bool $reportOnly): void

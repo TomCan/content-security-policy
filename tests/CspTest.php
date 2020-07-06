@@ -132,4 +132,16 @@ class CspTest extends TestCase
             $this->assertArrayHasKey($item, $csp->getDirective('plugin-types'));
         }
     }
+
+    private function _testDirectiveWithoutValues($directive): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        $csp->addToDirective($directive, null);
+        $this->assertEmpty($csp->getDirective($directive));
+    }
+
+    public function testUpgradeInsecureRequestsDirective(): void
+    {
+        $this->_testDirectiveWithoutValues(ContentSecurityPolicy::DIRECTIVE_UPGRADE_INSECURE_REQUESTS);
+    }
 }
