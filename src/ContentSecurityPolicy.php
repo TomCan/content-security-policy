@@ -21,6 +21,7 @@ class ContentSecurityPolicy
     const DIRECTIVE_IMG_SRC = 'img-src';
     const DIRECTIVE_MANIFEST_SRC = 'manifest-src';
     const DIRECTIVE_MEDIA_SRC = 'media-src';
+    const DIRECTIVE_NAVIGATE_TO = 'navigate-to';
     const DIRECTIVE_OBJECT_SRC = 'object-src';
     const DIRECTIVE_PREFETCH_SRC = 'prefetch-src';
     const DIRECTIVE_REPORT_TO = 'report-to';
@@ -42,6 +43,7 @@ class ContentSecurityPolicy
         self::DIRECTIVE_IMG_SRC,
         self::DIRECTIVE_MANIFEST_SRC,
         self::DIRECTIVE_MEDIA_SRC,
+        self::DIRECTIVE_NAVIGATE_TO,
         self::DIRECTIVE_OBJECT_SRC,
         self::DIRECTIVE_PREFETCH_SRC,
         self::DIRECTIVE_REPORT_TO,
@@ -153,6 +155,7 @@ class ContentSecurityPolicy
                 case 'base-uri':
                 case 'child-src':
                 case 'form-action':
+                case 'navigate-to':
                     $patterns[] = self::PAT_SOURCE_UNSAFE_EVAL;
                     $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
                     $patterns[] = self::PAT_SOURCE_SHA;

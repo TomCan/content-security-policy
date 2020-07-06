@@ -114,4 +114,14 @@ class CspTest extends TestCase
             $this->assertArrayHasKey($item, $csp->getDirective('frame-ancestors'));
         }
     }
+
+    public function testNavigateToDirective(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        foreach (["'self'", "'unsafe-eval'", "'nonce-ThisIsANonce123=='", 'http:', 'https://www.tom.be'] as $item) {
+            $csp->addToDirective('navigate-to', $item);
+            $this->assertArrayHasKey($item, $csp->getDirective('navigate-to'));
+        }
+    }
+
 }
