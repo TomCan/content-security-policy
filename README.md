@@ -1,23 +1,15 @@
 # tomcan/content-security-policy
 A PHP Content-Security-Policy library
 
-# tomcan/content-security-policy
-A PHP Content-Security-Policy library
+## Usage
+Install through composer  
 
-## Versioning
-The major version of this library refers to the CSP Level it is compatible with.  
-1.x is CSP Level 1 (CSP 1.0) compatible  
-2.x is CSP Level 2 compatible  
-3.x is CSP Level 3 compatible  
-...
+```# composer require tomcan/content-security-policy```
 
-v1.0.0 is CSP Level 1 compatible.## Versioning
-The major version of this library refers to the CSP Level it is compatible with.  
-1.x is CSP Level 1 (CSP 1.0) compatible  
-2.x is CSP Level 2 compatible  
-3.x is CSP Level 3 compatible  
-...
-
-v1.0.0 is CSP Level 1 compatible.  
-v2.0.0 is CSP Level 2 compatible.  
-v3.0.1-alpha in not yet fully Level 3 compatible.  
+```php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+$csp = new \TomCan\Csp\ContentSecurityPolicy();
+$csp->addToDirective(\TomCan\Csp\ContentSecurityPolicy::DIRECTIVE_DEFAULT_SRC, 'self');
+echo $csp; // default-src: 'self';
+```
