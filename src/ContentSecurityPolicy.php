@@ -146,7 +146,11 @@ class ContentSecurityPolicy
                 $this->addToSandbox($value);
                 break;
             case self::DIRECTIVE_UPGRADE_INSECURE_REQUESTS:
-                $this->addNoValueDirective($directive);
+                if ($value === null) {
+                    $this->addNoValueDirective($directive);
+                } else {
+                    throw new CspInvalidSourceListItemException(sprintf("\"%s\" is not a valid source list item for directive \"%s\"", $value, $directive));
+                }
                 break;
 
             default:

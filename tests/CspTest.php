@@ -4,6 +4,7 @@ namespace Test;
 
 use PHPUnit\Framework\TestCase;
 use TomCan\Csp\ContentSecurityPolicy;
+use TomCan\Csp\Exception\CspInvalidSourceListItemException;
 
 class CspTest extends TestCase
 {
@@ -140,8 +141,21 @@ class CspTest extends TestCase
         $this->assertEmpty($csp->getDirective($directive));
     }
 
+    private function _testDirectiveWithoutValues2($directive): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        $this->expectException(CspInvalidSourceListItemException::class);
+        $csp->addToDirective($directive, "'self'");
+    }
+
     public function testUpgradeInsecureRequestsDirective(): void
     {
         $this->_testDirectiveWithoutValues(ContentSecurityPolicy::DIRECTIVE_UPGRADE_INSECURE_REQUESTS);
     }
+
+    public function testUpgradeInsecureRequestsDirectiveInvalid(): void
+    {
+        $this->_testDirectiveWithoutValues2(ContentSecurityPolicy::DIRECTIVE_UPGRADE_INSECURE_REQUESTS);
+    }
+
 }
