@@ -43,13 +43,13 @@ class CspTest extends TestCase
         $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline';", (string)$csp);
 
         $csp->addToDirective('sandbox', null);
-        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; sandbox;", (string)$csp);
+        $this->assertEquals("default-src 'self' https://www.tom.be; sandbox; script-src 'unsafe-inline';", (string)$csp);
 
         $csp->addToDirective('sandbox', 'allow-popups');
-        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; sandbox allow-popups;", (string)$csp);
+        $this->assertEquals("default-src 'self' https://www.tom.be; sandbox allow-popups; script-src 'unsafe-inline';", (string)$csp);
 
         $csp->addToDirective('report-to', 'my-endpoint');
-        $this->assertEquals("default-src 'self' https://www.tom.be; script-src 'unsafe-inline'; report-to my-endpoint; sandbox allow-popups;", (string)$csp);
+        $this->assertEquals("default-src 'self' https://www.tom.be; report-to my-endpoint; sandbox allow-popups; script-src 'unsafe-inline';", (string)$csp);
     }
 
     public function testToCspStringFull()
