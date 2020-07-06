@@ -15,6 +15,7 @@ class ContentSecurityPolicy
     const DIRECTIVE_DEFAULT_SRC = 'default-src';
     const DIRECTIVE_CHILD_SRC = 'child-src';
     const DIRECTIVE_FONT_SRC = 'font-src';
+    const DIRECTIVE_FORM_ACTION = 'form-action';
     const DIRECTIVE_FRAME_SRC = 'frame-src';
     const DIRECTIVE_IMG_SRC = 'img-src';
     const DIRECTIVE_MANIFEST_SRC = 'manifest-src';
@@ -34,6 +35,7 @@ class ContentSecurityPolicy
         self::DIRECTIVE_CHILD_SRC,
         self::DIRECTIVE_DEFAULT_SRC,
         self::DIRECTIVE_FONT_SRC,
+        self::DIRECTIVE_FORM_ACTION,
         self::DIRECTIVE_FRAME_SRC,
         self::DIRECTIVE_IMG_SRC,
         self::DIRECTIVE_MANIFEST_SRC,
@@ -148,6 +150,7 @@ class ContentSecurityPolicy
                 case 'script-src':
                 case 'base-uri':
                 case 'child-src':
+                case 'form-action':
                     $patterns[] = self::PAT_SOURCE_UNSAFE_EVAL;
                     $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
                     $patterns[] = self::PAT_SOURCE_SHA;
