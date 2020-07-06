@@ -105,4 +105,13 @@ class CspTest extends TestCase
             $this->assertArrayHasKey($item, $csp->getDirective('form-action'));
         }
     }
+
+    public function testFrameAncestorsDirective(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        foreach (["'self'", 'http:', 'https://www.tom.be'] as $item) {
+            $csp->addToDirective('frame-ancestors', $item);
+            $this->assertArrayHasKey($item, $csp->getDirective('frame-ancestors'));
+        }
+    }
 }
