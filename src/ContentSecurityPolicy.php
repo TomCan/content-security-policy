@@ -13,6 +13,7 @@ class ContentSecurityPolicy
     const DIRECTIVE_BASE_URI = 'base-uri';
     const DIRECTIVE_CONNECT_SRC = 'connect-src';
     const DIRECTIVE_DEFAULT_SRC = 'default-src';
+    const DIRECTIVE_CHILD_SRC = 'child-src';
     const DIRECTIVE_FONT_SRC = 'font-src';
     const DIRECTIVE_FRAME_SRC = 'frame-src';
     const DIRECTIVE_IMG_SRC = 'img-src';
@@ -30,6 +31,7 @@ class ContentSecurityPolicy
     const VALID_DIRECTIVES = [
         self::DIRECTIVE_BASE_URI,
         self::DIRECTIVE_CONNECT_SRC,
+        self::DIRECTIVE_CHILD_SRC,
         self::DIRECTIVE_DEFAULT_SRC,
         self::DIRECTIVE_FONT_SRC,
         self::DIRECTIVE_FRAME_SRC,
@@ -145,6 +147,7 @@ class ContentSecurityPolicy
             switch ($directive) {
                 case 'script-src':
                 case 'base-uri':
+                case 'child-src':
                     $patterns[] = self::PAT_SOURCE_UNSAFE_EVAL;
                     $patterns[] = self::PAT_SOURCE_UNSAFE_INLINE;
                     $patterns[] = self::PAT_SOURCE_SHA;

@@ -87,4 +87,13 @@ class CspTest extends TestCase
             $this->assertArrayHasKey($item, $csp->getDirective('base-uri'));
         }
     }
+
+    public function testChildSrcDirective(): void
+    {
+        $csp = new ContentSecurityPolicy(ContentSecurityPolicy::MODE_STRICT);
+        foreach (["'self'", "'unsafe-eval'", "'nonce-ThisIsANonce123=='", 'http:', 'https://www.tom.be'] as $item) {
+            $csp->addToDirective('child-src', $item);
+            $this->assertArrayHasKey($item, $csp->getDirective('child-src'));
+        }
+    }
 }
